@@ -34,12 +34,12 @@ TorsoModule::TorsoModule()
 
 		//searching motion 1
 		// search_phase : 1
-		search_motion[0][0] = 0.523599;		// Degree -> 30
+		search_motion[0][0] = 0.698132;		// Degree -> 40
 		search_motion[0][1] = 0.785398;	 	// Degree -> 45
 		search_motion[0][2] = 0.0;
 
 		// search_phase : 2
-		search_motion[1][0] = 0.523599;		// Degree -> 30
+		search_motion[1][0] = 0.698132;		// Degree -> 40
 		search_motion[1][1] = -0.785398;	// Degree -> 45
 		search_motion[1][2] = 0.0;
 
@@ -50,12 +50,12 @@ TorsoModule::TorsoModule()
 		
 		//searching motion 2
 		// search_phase : 4
-		search_motion[3][0] = 0.174533;		// Degree -> 10
+		search_motion[3][0] = 0.526599;		// Degree -> 20
 		search_motion[3][1] = 0.785398;	 	// Degree -> 45
 		search_motion[3][2] = 0.0;
 
 		// search_phase : 5
-		search_motion[4][0] = 0.174533;		// Degree -> 10
+		search_motion[4][0] = 0.526599;		// Degree -> 20
 		search_motion[4][1] = -0.785398;	// Degree -> 45
 		search_motion[4][2] = 0.0;
 
@@ -1109,7 +1109,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			if(motion_phase_init)
 			{
-				tra_reset(3, 2.0);
+				tra_reset(3, 4.0);
 				
 				for(int dxl_id = 7; dxl_id < 10; dxl_id++){
 					joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]]	 = dxls[joint_id_to_name_[dxl_id]]->dxl_state_->present_position_;
@@ -1171,7 +1171,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			if(motion_phase_init)
 			{
-				tra_reset(3, 2.0);
+				tra_reset(3, 4.0);
 				for(int dxl_id = 7; dxl_id < 10; dxl_id++){
 					joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]]	 = dxls[joint_id_to_name_[dxl_id]]->dxl_state_->present_position_;
 					joint_name_to_ini_pose_goal_[joint_id_to_name_[dxl_id]]	= search_motion[search_phase - 1][dxl_id-7];
@@ -1486,7 +1486,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			if(motion_phase_init)
 			{
-				tra_reset(3, 3.0);
+				tra_reset(3, 2.0);
 				
 				for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				{
