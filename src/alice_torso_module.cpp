@@ -515,11 +515,11 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 	joint_id_to_rad_[8]=joint_name_to_curr_pose_[joint_id_to_name_[8]]-error_yaw;
 	joint_id_to_rad_[7]=joint_name_to_curr_pose_[joint_id_to_name_[7]]+error_pitch;
 	
-	if(joint_id_to_rad_[8] < 15 && joint_id_to_rad_[8] > -15)
+	if(joint_id_to_rad_[8] < DEG2RAD_(15) && joint_id_to_rad_[8] > DEG2RAD_(-15))
 	{	
-		if(joint_id_to_rad_[7] > DEG2RAD_(-abs(joint_id_to_rad_[8])* 4.0 + 80))
+		if(joint_id_to_rad_[7] > DEG2RAD_(-abs(RAD2DEG_(joint_id_to_rad_[8]))* 2.5 + 85))
 		{
-			joint_id_to_rad_[7]= -abs(joint_id_to_rad_[8]) * 4.0 + 80;
+			joint_id_to_rad_[7]= DEG2RAD_(-abs(RAD2DEG_(joint_id_to_rad_[8])) * 2.5 + 85);
 		}
 		else if(joint_id_to_rad_[7] < -DEG2RAD_(10))
 		{
@@ -528,9 +528,9 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 	}
 	else
 	{
-		if(joint_id_to_rad_[7] > 60)
+		if(joint_id_to_rad_[7] > DEG2RAD_(60))
 		{
-			joint_id_to_rad_[7] = 60;
+			joint_id_to_rad_[7] = DEG2RAD_(60);
 		}
 		else if(joint_id_to_rad_[7] < -DEG2RAD_(10))
 		{
@@ -545,7 +545,7 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 	else if(joint_id_to_rad_[8]<-DEG2RAD_(60))
 	{
 		joint_id_to_rad_[8]=-DEG2RAD_(60);
-	}	
+	}		
 	
 	//ROS_INFO("%f", joint_id_to_rad_[8]);
 
