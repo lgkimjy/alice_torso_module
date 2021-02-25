@@ -476,6 +476,8 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 			break;
 		}
 	}
+	// ROS_INFO("current x : %f ", current_x);
+	// ROS_INFO(" , current y : %f ", current_y);
 
 	if(ball_detected)
 	{
@@ -489,6 +491,9 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 
 		error_yaw   = DEG2RAD_(error_calculate(x_origin,current_x)/14.2);
 		error_pitch = DEG2RAD_(error_calculate(y_origin,current_y)/12);
+		
+		//if(error_yaw < DEG2RAD_(30))   error_yaw = 0;   //DEG2RAD_(x_origin/14.2);
+		//if(error_pitch < DEG2RAD_(20)) error_pitch = 0; //DEG2RAD_(y_origin/12);
 
 		//ROS_INFO("current_x : %f\n", current_x);
 		//ROS_INFO("current_y : %f\n", current_y);
@@ -512,16 +517,16 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 		update_state = false;
 	}
 
-	joint_id_to_rad_[8]=joint_name_to_curr_pose_[joint_id_to_name_[8]]-error_yaw;
-	joint_id_to_rad_[7]=joint_name_to_curr_pose_[joint_id_to_name_[7]]+error_pitch;
+	joint_id_to_rad_[8]= (joint_name_to_curr_pose_[joint_id_to_name_[8]] - 0.7 * error_yaw);
+	joint_id_to_rad_[7]= (joint_name_to_curr_pose_[joint_id_to_name_[7]] + 0.7 * error_pitch);
 	
-	if(joint_id_to_rad_[7]>DEG2RAD_(-abs(joint_id_to_rad_[8])*0.44+60))
+	if(joint_id_to_rad_[7]>DEG2RAD_(70))
 	{
-		joint_id_to_rad_[7]= -abs(joint_id_to_rad_[8])*0.44+60;
+		joint_id_to_rad_[7]= DEG2RAD_(70);
 	}
-	else if(joint_id_to_rad_[7]<-DEG2RAD_(10))
+	else if(joint_id_to_rad_[7]<DEG2RAD_(20))
 	{
-		joint_id_to_rad_[7]=-DEG2RAD_(10);
+		joint_id_to_rad_[7]=DEG2RAD_(20);
 	}
 
 	if(joint_id_to_rad_[8]>DEG2RAD_(45))
@@ -531,11 +536,12 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 	else if(joint_id_to_rad_[8]<-DEG2RAD_(45))
 	{
 		joint_id_to_rad_[8]=-DEG2RAD_(45);
-	}		
+	}
 	
 	//ROS_INFO("%f", joint_id_to_rad_[8]);
 
 	is_moving_state=true;
+	usleep(100);
 			
 }
 
