@@ -964,9 +964,19 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			{
 				if(is_moving_state)
 				{
-					for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+					for(int dxl_id = 7; dxl_id < 9; dxl_id++){
 						result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
-					torso_module_state -> count++;
+						torso_module_state -> count++;
+						if(torso_module_state->count == torso_module_state->all_time_steps)
+						{ 
+							is_moving_state = false;
+							new_count_ = 1;
+							motion_phase_init = true;
+							start = false;
+							scan_done_msg.data = true;
+							scan_done_pub.publish(scan_done_msg);
+						}
+					}
 				
 				}
 				
@@ -1115,6 +1125,17 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
 			torso_module_state -> count++;
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				search_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
+			}
+			
 		}
 
 		if(search_phase == 1)
@@ -1222,6 +1243,17 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
 			torso_module_state -> count++;
+
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				search_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
+			}
 		}
 
 		if(search_phase == 4)
@@ -1327,12 +1359,22 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			//ROS_INFO("into moving state!!\n");
 
-			for(int i=7; i<9;i++)
-			{
-				for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+			//for(int i=7; i<9;i++)
+			//{
+			for(int dxl_id = 7; dxl_id < 9; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
-				torso_module_state -> count++;
+			torso_module_state -> count++;
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				search_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
 			}
+			//}
 		}
 
 		if(ball_check_phase == 1)
@@ -1385,6 +1427,16 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
 			torso_module_state -> count++;
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				ball_check_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
+			}
 		}
 
 		if(ball_check_phase == 2)
@@ -1492,6 +1544,16 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
 			torso_module_state -> count++;
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				to_base_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
+			}
 		}
 
 		if(to_base_phase == 1)
@@ -1542,12 +1604,22 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			//ROS_INFO("into moving state!!\n");
 
-			for(int i=7; i<9;i++)
-			{
-				for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+			//for(int i=7; i<9;i++)
+			//{
+			for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
-				torso_module_state -> count++;
+			torso_module_state -> count++;
+			if(torso_module_state -> count == torso_module_state -> all_time_steps)
+			{
+				search_phase = 0;
+				is_moving_state = false;
+				new_count_ = 1;
+				motion_phase_init = false;
+				pre_mode_ = 6;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
 			}
+			//}
 		}
 
 		if(ball_check_phase == 5)
@@ -1556,7 +1628,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			{
 				tra_reset(3, 3.0);
 				
-				for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+				for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				{
 					joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]]	 = dxls[joint_id_to_name_[dxl_id]]->dxl_state_->present_position_;
 					joint_name_to_ini_pose_goal_[joint_id_to_name_[dxl_id]]	= ball_check_motion[ball_check_phase - 1][dxl_id-7];
