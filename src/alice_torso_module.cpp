@@ -34,12 +34,12 @@ TorsoModule::TorsoModule()
 
 		//searching motion 1
 		// search_phase : 1
-		search_motion[0][0] = 0.698132;		// Degree -> 40
+		search_motion[0][0] = 0.872665;		// Degree -> 50
 		search_motion[0][1] = 0.785398;	 	// Degree -> 45
 		search_motion[0][2] = 0.0;
 
 		// search_phase : 2
-		search_motion[1][0] = 0.698132;		// Degree -> 40
+		search_motion[1][0] = 0.872665;		// Degree -> 50
 		search_motion[1][1] = -0.785398;	// Degree -> 45
 		search_motion[1][2] = 0.0;
 
