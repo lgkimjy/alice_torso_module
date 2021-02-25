@@ -67,18 +67,18 @@ TorsoModule::TorsoModule()
 
 		//ball_check motion_1
 		// ball_check_phase : 1
-		ball_check_motion[0][0] = 1.13446; // Degree -> 65
+		ball_check_motion[0][0] = 1.22173; // Degree -> 70
 		ball_check_motion[0][1] = 0.0;
 		ball_check_motion[0][2] = 0.0;
 		
-		//ball_check motion_1
+		//ball_check motion_2
 		//ball_check_phase : 2
-		ball_check_motion[1][0] = 1.13446;
+		ball_check_motion[1][0] = 1.13446;   // Degree -> 65
 		ball_check_motion[1][1] = 0.0;
 		ball_check_motion[1][2] = 0.523599;  //  Degree -> 30
 		
 		//ball_check_phase : 3
-		ball_check_motion[2][0] = 1.13446;
+		ball_check_motion[2][0] = 1.13446;   // Degree -> 65
 		ball_check_motion[2][1] = 0.0;
 		ball_check_motion[2][2] = -0.523599; //  Degree -> 30
 		
@@ -87,6 +87,14 @@ TorsoModule::TorsoModule()
 		ball_check_motion[3][1] = 0.0;
 		ball_check_motion[3][2] = 0.0;
 
+		//ball_check motion_3
+		//ball_check_phase : 4
+		ball_check_motion[4][0] = 0.698132;   //  Degree -> 40
+		ball_check_motion[4][1] = 0.0;
+		ball_check_motion[4][2] = 0.0;
+
+
+		// back to base pose
 		head_to_base[0][0] = 0.526599;		// Degree -> 20
 		head_to_base[0][1] = 0.0;
 		head_to_base[0][2] = 0.0;
@@ -520,13 +528,13 @@ void TorsoModule::detectedObjectsMsgCallback(const alice_msgs::FoundObjectArray:
 	joint_id_to_rad_[8]= (joint_name_to_curr_pose_[joint_id_to_name_[8]] - 0.7 * error_yaw);
 	joint_id_to_rad_[7]= (joint_name_to_curr_pose_[joint_id_to_name_[7]] + 0.7 * error_pitch);
 	
-	if(joint_id_to_rad_[7]>DEG2RAD_(70))
+	if(joint_id_to_rad_[7]>DEG2RAD_(75))
 	{
-		joint_id_to_rad_[7]= DEG2RAD_(70);
+		joint_id_to_rad_[7]= DEG2RAD_(75);
 	}
-	else if(joint_id_to_rad_[7]<DEG2RAD_(20))
+	else if(joint_id_to_rad_[7]<DEG2RAD_(25))
 	{
-		joint_id_to_rad_[7]=DEG2RAD_(20);
+		joint_id_to_rad_[7]=DEG2RAD_(25);
 	}
 
 	if(joint_id_to_rad_[8]>DEG2RAD_(45))
@@ -755,6 +763,18 @@ void TorsoModule::headMovingMsgCallback(const diagnostic_msgs::KeyValue::ConstPt
 		is_moving_state = false;
 		motion_phase_init = true;
 		ROS_INFO("		Ball_check Mode_2\n");
+	}
+  }
+  else if(msg->key == "head_ball_check_3") //head ball check 2
+  {
+    mode_ = 9;
+	if((pre_mode_ != 9) || (ball_check_phase == 0))
+	{
+		new_count_ = 1;
+		ball_check_phase = 5;
+		is_moving_state = false;
+		motion_phase_init = true;
+		ROS_INFO("		Ball_check Mode_3\n");
 	}
   }
   else if(msg->key == "head_to_base") //head ball check 2
@@ -1502,6 +1522,62 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 			abs(dxls[joint_id_to_name_[8]]->dxl_state_->present_position_ - head_to_base[to_base_phase - 1][1]) < motion_bias)
 			{
 				to_base_phase = 0;
+				is_moving_state = false;
+				motion_phase_init = false;
+				new_count_ = 1;
+				pre_mode_ = 7;
+				scan_done_msg.data = true;
+				scan_done_pub.publish(scan_done_msg);
+			}
+
+			ROS_INFO("pre_pos : %f\n",dxls[joint_id_to_name_[7]]->dxl_state_->present_position_);
+			ROS_INFO("search motion : %f\n",search_motion[search_phase-1][0]);
+			ROS_INFO("gap : %f\n",abs(dxls[joint_id_to_name_[7]]->dxl_state_->present_position_ - search_motion[search_phase-1][0]));
+			
+		}
+	}
+	else if(mode_ == 9)  // ball_check mode
+	{
+		if(is_moving_state)
+		{
+			//ROS_INFO("into moving state!!\n");
+
+			for(int i=7; i<9;i++)
+			{
+				for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+				result_[joint_id_to_name_[dxl_id]] -> goal_position_ = torso_module_state -> calc_joint_tra(torso_module_state -> count, dxl_id - 6);
+				torso_module_state -> count++;
+			}
+		}
+
+		if(ball_check_phase == 5)
+		{
+			if(motion_phase_init)
+			{
+				tra_reset(3, 3.0);
+				
+				for(int dxl_id = 7; dxl_id < 9; dxl_id++)
+				{
+					joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]]	 = dxls[joint_id_to_name_[dxl_id]]->dxl_state_->present_position_;
+					joint_name_to_ini_pose_goal_[joint_id_to_name_[dxl_id]]	= ball_check_motion[ball_check_phase - 1][dxl_id-7];
+		
+					double ini_value = joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]];
+					double tar_value = joint_name_to_ini_pose_goal_[joint_id_to_name_[dxl_id]];
+		
+					Eigen::MatrixXd tra;
+		
+					tra = robotis_framework::calcMinimumJerkTra(ini_value, 0.0, 0.0, tar_value, 0.0,0.0, torso_module_state -> smp_time, torso_module_state -> mov_time);
+					torso_module_state -> calc_joint_tra.block(0, dxl_id - 6, torso_module_state -> all_time_steps, 1) = tra;
+				}
+
+				motion_phase_init = false;
+				is_moving_state = true;
+			}	
+
+			if(abs(dxls[joint_id_to_name_[7]]->dxl_state_->present_position_ - ball_check_motion[ball_check_phase - 1][0]) < motion_bias &&
+			abs(dxls[joint_id_to_name_[8]]->dxl_state_->present_position_ - ball_check_motion[ball_check_phase - 1][1]) < motion_bias)
+			{
+				ball_check_phase = 0;
 				is_moving_state = false;
 				motion_phase_init = false;
 				new_count_ = 1;

@@ -179,8 +179,8 @@ private:
   int to_base_phase;
 
   float search_motion[8][3];
-  float ball_check_motion[4][3];
-  float head_to_base[5][3];
+  float ball_check_motion[7][3];
+  float head_to_base[6][3];
   float motion_bias;
   bool start;
   bool scan_done;
