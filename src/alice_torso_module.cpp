@@ -1443,7 +1443,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			if(motion_phase_init)
 			{
-				tra_reset(3, 2.0);
+				tra_reset(3, 1.0);
 				
 				for(int dxl_id = 7; dxl_id < 10; dxl_id++){
 					joint_name_to_ini_pose_state_[joint_id_to_name_[dxl_id]]	 = dxls[joint_id_to_name_[dxl_id]]->dxl_state_->present_position_;
@@ -1626,7 +1626,7 @@ void TorsoModule::process(std::map<std::string, robotis_framework::Dynamixel *> 
 		{
 			if(motion_phase_init)
 			{
-				tra_reset(3, 3.0);
+				tra_reset(3, 2.0);
 				
 				for(int dxl_id = 7; dxl_id < 10; dxl_id++)
 				{
