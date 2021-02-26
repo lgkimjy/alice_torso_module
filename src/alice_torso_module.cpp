@@ -89,7 +89,7 @@ TorsoModule::TorsoModule()
 
 		//ball_check motion_3
 		//ball_check_phase : 4
-		ball_check_motion[4][0] = 0.698132;   //  Degree -> 40
+		ball_check_motion[4][0] = 0.436332;   //  Degree -> 25
 		ball_check_motion[4][1] = 0.0;
 		ball_check_motion[4][2] = 0.0;
 
