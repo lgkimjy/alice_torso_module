@@ -729,7 +729,7 @@ void TorsoModule::headMovingMsgCallback(const diagnostic_msgs::KeyValue::ConstPt
 		ROS_INFO("		Searching Mode\n");
 	}
   }
-  else if(msg->key == "head_scan") //head search
+  else if(msg->key == "head_scan") //head search version 1
   {
     mode_ = 4;
 	if((pre_mode_ != 4) || (search_phase == 0))
